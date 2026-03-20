@@ -72,6 +72,15 @@ body{font-family:'Noto Serif SC','Georgia',serif;background:var(--bg-primary);co
 .nav-icon{font-size:1.15rem;width:24px;text-align:center}
 .sidebar-footer{padding:16px 24px;border-top:1px solid var(--border);font-size:0.72rem;color:var(--text-tertiary);font-family:'JetBrains Mono',monospace}
 
+/* Sync status */
+.sync-status{padding:8px 24px;font-size:0.7rem;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px}
+.sync-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sync-dot.online{background:#4CAF50}
+.sync-dot.offline{background:var(--text-tertiary)}
+.sync-dot.syncing{background:#FFA726;animation:blink 1s infinite}
+.sync-dot.error{background:#EF5350}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
 .page-header{margin-bottom:32px;display:flex;align-items:flex-end;justify-content:space-between}
 .page-header h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;letter-spacing:-0.02em}
 .page-header .subtitle{font-size:0.82rem;color:var(--text-tertiary);margin-top:4px;font-family:'JetBrains Mono',monospace}
@@ -91,7 +100,7 @@ body{font-family:'Noto Serif SC','Georgia',serif;background:var(--bg-primary);co
 .editor-title::placeholder{color:var(--text-tertiary)}
 .editor-content{width:100%;border:none;background:transparent;font-family:inherit;font-size:0.95rem;color:var(--text-primary);line-height:2;resize:none;min-height:320px;outline:none}
 .editor-content::placeholder{color:var(--text-tertiary)}
-.editor-toolbar{display:flex;gap:8px;padding-top:16px;border-top:1px solid var(--border-light);margin-top:16px;align-items:center}
+.editor-toolbar{display:flex;gap:8px;padding-top:16px;border-top:1px solid var(--border-light);margin-top:16px;align-items:center;flex-wrap:wrap}
 .mood-options{display:flex;gap:8px;flex-wrap:wrap}
 .mood-btn{width:40px;height:40px;border-radius:50%;border:2px solid var(--border-light);background:var(--bg-card);font-size:1.2rem;cursor:pointer;transition:all var(--transition);display:flex;align-items:center;justify-content:center}
 .mood-btn:hover{border-color:var(--accent);transform:scale(1.1)}
@@ -175,13 +184,17 @@ body{font-family:'Noto Serif SC','Georgia',serif;background:var(--bg-primary);co
 .pomo-stat-value{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:500}
 .pomo-stat-label{font-size:0.72rem;color:var(--text-tertiary);margin-top:2px;text-transform:uppercase;letter-spacing:0.08em}
 
+/* Settings page */
+.settings-page{max-width:560px}
+.settings-group{margin-bottom:28px}
+.settings-group h3{font-size:0.9rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.settings-input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'JetBrains Mono',monospace;font-size:0.82rem;background:var(--bg-card);color:var(--text-primary);outline:none;transition:border-color var(--transition)}
+.settings-input:focus{border-color:var(--accent)}
+.settings-hint{font-size:0.75rem;color:var(--text-tertiary);margin-top:6px;line-height:1.6}
+.settings-row{display:flex;gap:8px;align-items:center;margin-top:10px}
+
 .toast{position:fixed;bottom:28px;right:28px;background:var(--text-primary);color:var(--bg-primary);padding:12px 20px;border-radius:var(--radius-sm);font-size:0.85rem;box-shadow:var(--shadow-lg);transform:translateY(80px);opacity:0;transition:all 0.3s ease;z-index:999}
 .toast.show{transform:translateY(0);opacity:1}
-
-.modal-overlay{position:fixed;inset:0;background:rgba(45,32,23,0.4);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity 0.2s ease}
-.modal-overlay.show{opacity:1;pointer-events:all}
-.modal{background:var(--bg-card);border-radius:var(--radius-lg);padding:32px;max-width:480px;width:90%;box-shadow:var(--shadow-lg);transform:scale(0.95);transition:transform 0.2s ease}
-.modal-overlay.show .modal{transform:scale(1)}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .page-content{animation:fadeIn 0.3s ease}
@@ -240,54 +253,210 @@ body{font-family:'Noto Serif SC','Georgia',serif;background:var(--bg-primary);co
   </div>
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <aside class="sidebar" id="sidebar">
-    <div class="logo"><h1>赛博笔记本</h1><p>Cyber Notebook v1.0</p></div>
+    <div class="logo"><h1>赛博笔记本</h1><p>Cyber Notebook v2.0</p></div>
     <nav class="nav">
       <button class="nav-item active" onclick="switchPage('diary')"><span class="nav-icon">✦</span> 写日记</button>
       <button class="nav-item" onclick="switchPage('calendar')"><span class="nav-icon">◇</span> 日历回顾</button>
       <button class="nav-item" onclick="switchPage('answers')"><span class="nav-icon">❋</span> 答案之书</button>
       <button class="nav-item" onclick="switchPage('pomodoro')"><span class="nav-icon">◎</span> 番茄钟</button>
+      <button class="nav-item" onclick="switchPage('settings')"><span class="nav-icon">⚙</span> 同步设置</button>
     </nav>
+    <div class="sync-status" id="syncStatus"><span class="sync-dot offline"></span> 未连接云端</div>
     <div class="sidebar-footer">已记录 <span id="totalEntries">0</span> 篇日记</div>
   </aside>
   <main class="main" id="mainContent"></main>
 </div>
 
 <div class="toast" id="toast"></div>
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal"><h3 id="modalTitle"></h3><div class="modal-body" id="modalBody"></div>
-    <div class="modal-footer"><button class="btn btn-sm" onclick="closeModal()">关闭</button></div>
-  </div>
-</div>
 
 <script>
+// ═══════════════════════════════════════
+//  COVER
+// ═══════════════════════════════════════
 (function(){
   const now=new Date(),w=['日','一','二','三','四','五','六'];
   document.getElementById('coverDate').textContent=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} · 星期${w[now.getDay()]}`;
   const c=document.getElementById('particles');
   for(let i=0;i<30;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(6+Math.random()*10)+'s';p.style.animationDelay=(Math.random()*8)+'s';p.style.width=p.style.height=(1+Math.random()*2.5)+'px';c.appendChild(p);}
 })();
-
 function openNotebook(){document.getElementById('coverScene').classList.add('opened');document.getElementById('appRoot').classList.add('visible');}
 
+// ═══════════════════════════════════════
+//  GITHUB SYNC ENGINE
+// ═══════════════════════════════════════
+const GH_CFG_KEY = 'cyber_nb_gh_config';
+const GH_DATA_FILE = 'notebook-data.json';
+let ghConfig = JSON.parse(localStorage.getItem(GH_CFG_KEY) || 'null'); // {token, owner, repo}
+let ghSHA = null; // SHA of the data file, needed for updates
+let syncState = 'offline'; // offline | syncing | online | error
+
+function setSyncState(state, msg) {
+  syncState = state;
+  const el = document.getElementById('syncStatus');
+  const labels = { offline: '未连接云端', syncing: '同步中...', online: '已连接云端', error: msg || '同步失败' };
+  el.innerHTML = `<span class="sync-dot ${state}"></span> ${labels[state]}`;
+}
+
+// Base64 helpers that handle Unicode (Chinese characters)
+function utf8ToB64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function b64ToUtf8(b64) {
+  return decodeURIComponent(escape(atob(b64)));
+}
+
+async function ghAPI(path, method='GET', body=null) {
+  if (!ghConfig) return null;
+  const opts = {
+    method,
+    headers: {
+      'Authorization': `token ${ghConfig.token}`,
+      'Accept': 'application/vnd.github.v3+json'
+    }
+  };
+  if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+  const r = await fetch(`https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${path}`, opts);
+  if (!r.ok) throw new Error(`GitHub API ${r.status}`);
+  return r.json();
+}
+
+async function cloudLoad() {
+  if (!ghConfig) return null;
+  setSyncState('syncing');
+  try {
+    const res = await ghAPI(GH_DATA_FILE);
+    ghSHA = res.sha;
+    const data = JSON.parse(b64ToUtf8(res.content.replace(/\n/g, '')));
+    setSyncState('online');
+    return data;
+  } catch (e) {
+    if (e.message.includes('404')) {
+      // File doesn't exist yet, that's fine
+      setSyncState('online');
+      return null;
+    }
+    console.error('Cloud load failed:', e);
+    setSyncState('error', '读取失败');
+    return null;
+  }
+}
+
+async function cloudSave(data) {
+  if (!ghConfig) return;
+  setSyncState('syncing');
+  try {
+    const body = {
+      message: `Update notebook ${new Date().toISOString().slice(0, 10)}`,
+      content: utf8ToB64(JSON.stringify(data, null, 2))
+    };
+    if (ghSHA) body.sha = ghSHA;
+    const res = await ghAPI(GH_DATA_FILE, 'PUT', body);
+    ghSHA = res.content.sha;
+    setSyncState('online');
+  } catch (e) {
+    console.error('Cloud save failed:', e);
+    setSyncState('error', '保存失败，已存本地');
+    // If SHA mismatch (409 conflict), try to re-fetch
+    if (e.message.includes('409') || e.message.includes('422')) {
+      try {
+        const res = await ghAPI(GH_DATA_FILE);
+        ghSHA = res.sha;
+        // Retry save
+        const body = { message: `Update notebook ${new Date().toISOString().slice(0, 10)}`, content: utf8ToB64(JSON.stringify(data, null, 2)), sha: ghSHA };
+        const r2 = await ghAPI(GH_DATA_FILE, 'PUT', body);
+        ghSHA = r2.content.sha;
+        setSyncState('online');
+      } catch (e2) {
+        console.error('Retry failed:', e2);
+      }
+    }
+  }
+}
+
+async function testGHConnection(token, owner, repo) {
+  try {
+    const r = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    return r.ok;
+  } catch(e) { return false; }
+}
+
+// ═══════════════════════════════════════
+//  DATA LAYER (localStorage + GitHub sync)
+// ═══════════════════════════════════════
 const DB='cyber_notebook_data';
-function loadData(){try{const r=localStorage.getItem(DB);if(r)return JSON.parse(r);}catch(e){}return{entries:{},pomodoroCount:0};}
-function saveData(d){localStorage.setItem(DB,JSON.stringify(d));}
-let appData=loadData();
+function loadLocal(){try{const r=localStorage.getItem(DB);if(r)return JSON.parse(r);}catch(e){}return{entries:{},pomodoroCount:0};}
+function saveLocal(d){localStorage.setItem(DB,JSON.stringify(d));}
+
+let appData=loadLocal();
+
 function getEntry(d){return appData.entries[d]||null;}
-function saveEntry(d,t,c,m){appData.entries[d]={title:t,content:c,mood:m,updatedAt:Date.now()};saveData(appData);updateTotal();}
-function deleteEntry(d){delete appData.entries[d];saveData(appData);updateTotal();}
+
+function saveEntry(d,t,c,m){
+  appData.entries[d]={title:t,content:c,mood:m,updatedAt:Date.now()};
+  saveLocal(appData);
+  updateTotal();
+  cloudSave(appData); // async, fire-and-forget
+}
+
+function deleteEntry(d){
+  delete appData.entries[d];
+  saveLocal(appData);
+  updateTotal();
+  cloudSave(appData);
+}
+
 function updateTotal(){document.getElementById('totalEntries').textContent=Object.keys(appData.entries).length;}
 
+// Merge cloud data with local data (cloud wins for same-date conflicts if newer)
+function mergeData(local, cloud) {
+  if (!cloud) return local;
+  const merged = { entries: { ...local.entries }, pomodoroCount: Math.max(local.pomodoroCount || 0, cloud.pomodoroCount || 0) };
+  for (const [date, entry] of Object.entries(cloud.entries || {})) {
+    if (!merged.entries[date] || (entry.updatedAt || 0) > (merged.entries[date].updatedAt || 0)) {
+      merged.entries[date] = entry;
+    }
+  }
+  return merged;
+}
+
+// Initial cloud sync on page load
+async function initSync() {
+  if (!ghConfig) return;
+  const cloudData = await cloudLoad();
+  if (cloudData) {
+    appData = mergeData(appData, cloudData);
+    saveLocal(appData);
+    updateTotal();
+    render();
+    // Push merged data back to cloud
+    await cloudSave(appData);
+  }
+}
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
 function ds(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function fmt(s){const[y,m,d]=s.split('-');const w=['日','一','二','三','四','五','六'];return`${y}年${+m}月${+d}日 星期${w[new Date(+y,+m-1,+d).getDay()]}`;}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
-function closeModal(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('modalOverlay').classList.remove('show');}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
+// ═══════════════════════════════════════
+//  PAGES
+// ═══════════════════════════════════════
 let page='diary',calView=new Date(),calSel=ds(new Date()),dDate=ds(new Date()),dMood='';
 
-function switchPage(p){page=p;document.querySelectorAll('.nav-item').forEach((el,i)=>el.classList.toggle('active',['diary','calendar','answers','pomodoro'][i]===p));render();document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('show');}
+function switchPage(p){
+  page=p;
+  const pages=['diary','calendar','answers','pomodoro','settings'];
+  document.querySelectorAll('.nav-item').forEach((el,i)=>el.classList.toggle('active',pages[i]===p));
+  render();
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
 
 function render(){
   const c=document.getElementById('mainContent');
@@ -295,8 +464,10 @@ function render(){
   else if(page==='calendar')c.innerHTML=rCal();
   else if(page==='answers')c.innerHTML=rAns();
   else if(page==='pomodoro')c.innerHTML=rPomo();
+  else if(page==='settings')c.innerHTML=rSettings();
 }
 
+// ── DIARY ──
 function rDiary(){
   const e=getEntry(dDate)||{},moods=['😊','😌','🤔','😢','😡','🎉','💪','🌙'],rec=getRec(5);
   return`<div class="page-content"><div class="page-header"><div><h2>写日记</h2><div class="subtitle">${fmt(dDate)}</div></div><div style="display:flex;gap:8px"><button class="btn btn-sm" onclick="expMD()">⬇ 导出 MD</button><button class="btn btn-sm" onclick="expAll()">⬇ 导出全部</button></div></div><div class="diary-editor"><div class="card editor-area"><input class="editor-title" id="dT" placeholder="今天的标题..." value="${esc(e.title||'')}"><textarea class="editor-content" id="dC" placeholder="写下你的想法...">${esc(e.content||'')}</textarea><div class="editor-toolbar"><div class="mood-options">${moods.map(m=>`<button class="mood-btn ${dMood===m||e.mood===m?'selected':''}" onclick="selMood('${m}')">${m}</button>`).join('')}</div><div style="flex:1"></div><button class="btn btn-primary" onclick="saveDiary()">保存</button>${e.title?`<button class="btn btn-sm" style="color:#c44" onclick="delDiary()">删除</button>`:''}</div></div><div class="side-panel"><div class="card mini-calendar">${rMiniCal()}</div><div class="card recent-entries"><h4>最近日记</h4>${rec.length===0?'<p style="font-size:0.82rem;color:var(--text-tertiary);padding:12px 0">还没有日记，开始写吧 ✦</p>':rec.map(r=>`<div class="entry-item" onclick="loadD('${r.date}')"><div class="entry-date">${fmt(r.date)} ${r.mood||''}</div><div class="entry-title">${esc(r.title)}</div><div class="entry-preview">${esc(r.content.substring(0,50))}</div></div>`).join('')}</div></div></div></div>`;
@@ -322,6 +493,7 @@ function rMiniCal(){
 function mcP(){mcM--;if(mcM<0){mcM=11;mcY--;}render();}
 function mcN(){mcM++;if(mcM>11){mcM=0;mcY++;}render();}
 
+// ── CALENDAR ──
 function rCal(){
   const today=ds(new Date()),y=calView.getFullYear(),mo=calView.getMonth(),f=new Date(y,mo,1).getDay(),days=new Date(y,mo+1,0).getDate(),lb=['日','一','二','三','四','五','六'],se=getEntry(calSel);
   let cal=`<div class="full-cal-grid">${lb.map(l=>`<span class="day-label">${l}</span>`).join('')}${Array(f).fill('<span class="full-cal-day empty"></span>').join('')}`;
@@ -336,6 +508,7 @@ function calN(){calView.setMonth(calView.getMonth()+1);render();}
 function calT(){calView=new Date();calSel=ds(new Date());render();}
 function expS(d){const e=getEntry(d);if(!e)return;dl(`diary-${d}.md`,`# ${e.title}\n\n**日期**: ${fmt(d)}  \n**心情**: ${e.mood||'未记录'}\n\n---\n\n${e.content}\n`);toast('已导出');}
 
+// ── ANSWERS ──
 const ans=['是的，大胆去做吧。','再等等，时机未到。','答案就在你心中。','不要犹豫了。','换个角度想想。','相信你的直觉。','也许不是现在。','一切都会好的。','放下执念。','这是一个好主意。','你需要更多信息。','去冒险吧。','顺其自然。','现在就行动。','沉淀一下再说。','问问你信任的人。','这条路是对的。','试试别的方向。','保持耐心。','答案是肯定的。','不，换一条路吧。','你已经知道答案了。','专注当下。','勇敢一点。','休息一下再想。','相信过程。','做你害怕的事。','等一个月再看。','跟随你的热情。','有时候放弃也是智慧。','你比想象中更强大。','明天会更清晰。'];
 let bFlip=false;
 function rAns(){
@@ -344,6 +517,7 @@ function rAns(){
 function flipB(){if(bFlip)return;bFlip=true;document.getElementById('aT').textContent=ans[Math.floor(Math.random()*ans.length)];document.getElementById('bI').classList.add('flipped');}
 function resetB(){bFlip=false;document.getElementById('bI').classList.remove('flipped');}
 
+// ── POMODORO ──
 const PM={focus:{label:'专注',seconds:25*60},short:{label:'短休息',seconds:5*60},long:{label:'长休息',seconds:15*60}};
 let pMode='focus',pTime=PM.focus.seconds,pRun=false,pInt=null,pTotal=appData.pomodoroCount||0;
 function rPomo(){
@@ -352,11 +526,98 @@ function rPomo(){
   return`<div class="page-content"><div class="page-header" style="justify-content:center;text-align:center"><div><h2>番茄钟</h2><div class="subtitle">Pomodoro Timer</div></div></div><div class="pomodoro-page"><div class="pomodoro-modes">${Object.entries(PM).map(([k,v])=>`<button class="pomo-mode-btn ${pMode===k?'active':''}" onclick="sPM('${k}')">${v.label}</button>`).join('')}</div><div class="timer-circle"><svg viewBox="0 0 264 264"><circle class="timer-track" cx="132" cy="132" r="${r}"/><circle class="timer-progress" cx="132" cy="132" r="${r}" stroke-dasharray="${circ}" stroke-dashoffset="${off}"/></svg><div class="timer-display"><div class="timer-time">${mm}:${ss}</div><div class="timer-label">${PM[pMode].label}</div></div></div><div class="timer-controls"><button class="timer-btn" onclick="rsPo()">↺</button><button class="timer-btn primary" onclick="tPo()">${pRun?'⏸':'▶'}</button><button class="timer-btn" onclick="skPo()">⏭</button></div><div class="pomo-stats"><div><div class="pomo-stat-value">${pTotal}</div><div class="pomo-stat-label">今日完成</div></div><div><div class="pomo-stat-value">${Math.round(pTotal*25/60*10)/10}h</div><div class="pomo-stat-label">专注时长</div></div></div></div></div>`;
 }
 function sPM(m){pMode=m;pTime=PM[m].seconds;pRun=false;clearInterval(pInt);render();}
-function tPo(){if(pRun){pRun=false;clearInterval(pInt);}else{pRun=true;pInt=setInterval(()=>{pTime--;if(pTime<=0){clearInterval(pInt);pRun=false;if(pMode==='focus'){pTotal++;appData.pomodoroCount=pTotal;saveData(appData);toast('专注完成！休息一下吧 🎉');}else toast('休息结束，继续加油！');pTime=0;}render();},1000);}render();}
+function tPo(){if(pRun){pRun=false;clearInterval(pInt);}else{pRun=true;pInt=setInterval(()=>{pTime--;if(pTime<=0){clearInterval(pInt);pRun=false;if(pMode==='focus'){pTotal++;appData.pomodoroCount=pTotal;saveLocal(appData);cloudSave(appData);toast('专注完成！休息一下吧 🎉');}else toast('休息结束，继续加油！');pTime=0;}render();},1000);}render();}
 function rsPo(){pRun=false;clearInterval(pInt);pTime=PM[pMode].seconds;render();}
 function skPo(){pRun=false;clearInterval(pInt);sPM(pMode==='focus'?'short':'focus');}
 
-updateTotal();render();
+// ── SETTINGS ──
+function rSettings(){
+  const connected = !!ghConfig;
+  return`<div class="page-content"><div class="page-header"><div><h2>同步设置</h2><div class="subtitle">GitHub Cloud Sync</div></div></div>
+    <div class="settings-page">
+      <div class="card">
+        <div class="settings-group">
+          <h3>☁️ 云端同步状态：${connected ? '<span style="color:#4CAF50">已连接</span>' : '<span style="color:var(--text-tertiary)">未连接</span>'}</h3>
+          ${connected ? `<p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:12px">数据同步到 <strong>${ghConfig.owner}/${ghConfig.repo}</strong></p>
+            <div class="settings-row"><button class="btn btn-sm" onclick="manualSync()">立即同步</button><button class="btn btn-sm" onclick="disconnectGH()">断开连接</button></div>` : ''}
+        </div>
+        ${!connected ? `
+        <div class="settings-group">
+          <h3>连接 GitHub 仓库</h3>
+          <p class="settings-hint" style="margin-bottom:12px">连接后，日记数据会自动保存到你的 GitHub 仓库，在任何设备打开网页都能读取。</p>
+          <label style="font-size:0.82rem;color:var(--text-secondary);display:block;margin-bottom:4px">GitHub 用户名</label>
+          <input class="settings-input" id="ghOwner" placeholder="例如：Poca0402" value="">
+          <div style="height:12px"></div>
+          <label style="font-size:0.82rem;color:var(--text-secondary);display:block;margin-bottom:4px">仓库名</label>
+          <input class="settings-input" id="ghRepo" placeholder="例如：Notebook-for-P" value="">
+          <div style="height:12px"></div>
+          <label style="font-size:0.82rem;color:var(--text-secondary);display:block;margin-bottom:4px">Personal Access Token</label>
+          <input class="settings-input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx" value="">
+          <p class="settings-hint">在 GitHub → Settings → Developer Settings → Personal Access Tokens 生成，勾选 repo 权限。</p>
+          <div class="settings-row" style="margin-top:16px"><button class="btn btn-primary" onclick="connectGH()">连接并同步</button></div>
+        </div>` : ''}
+        <div class="settings-group" style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border-light)">
+          <h3>💡 使用说明</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.8">
+            · 即使不连接云端，日记也会保存在浏览器本地，不会丢失<br>
+            · 连接后每次保存日记会自动同步到 GitHub 仓库<br>
+            · 在新设备上打开网站，配置同样的仓库信息即可同步<br>
+            · Token 只保存在你自己的浏览器里，不会上传到任何地方
+          </p>
+        </div>
+      </div>
+    </div></div>`;
+}
+
+async function connectGH(){
+  const owner = document.getElementById('ghOwner').value.trim();
+  const repo = document.getElementById('ghRepo').value.trim();
+  const token = document.getElementById('ghToken').value.trim();
+  if(!owner||!repo||!token){toast('请填写完整信息');return;}
+
+  toast('正在验证连接...');
+  const ok = await testGHConnection(token, owner, repo);
+  if(!ok){toast('连接失败，请检查信息是否正确');return;}
+
+  ghConfig = {token, owner, repo};
+  localStorage.setItem(GH_CFG_KEY, JSON.stringify(ghConfig));
+  toast('连接成功！开始同步...');
+  await initSync();
+  render();
+}
+
+function disconnectGH(){
+  if(!confirm('断开后此设备将不再云端同步，确定吗？'))return;
+  ghConfig = null;
+  ghSHA = null;
+  localStorage.removeItem(GH_CFG_KEY);
+  setSyncState('offline');
+  toast('已断开云端连接');
+  render();
+}
+
+async function manualSync(){
+  toast('同步中...');
+  const cloudData = await cloudLoad();
+  if(cloudData){
+    appData = mergeData(appData, cloudData);
+    saveLocal(appData);
+    updateTotal();
+    await cloudSave(appData);
+    render();
+    toast('同步完成 ✦');
+  } else {
+    await cloudSave(appData);
+    toast('已上传到云端 ✦');
+  }
+}
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+updateTotal();
+render();
+initSync(); // try to sync with GitHub on load
 </script>
 </body>
 </html>
